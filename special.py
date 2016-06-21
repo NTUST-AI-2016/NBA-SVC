@@ -9,17 +9,18 @@ from sklearn import metrics
 # Name,Pos,G,GS,MP,FG,FGA,FG%,3P,3PA,3P%,2P,2PA,2P%,eFG%,FT,FTA,FT%,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS
 
 position_dict = {
-    'C'  : 0,
-    'PF' : 1,
-    'SF' : 2,
-    'PG' : 3,
-    'SG' : 4
+    'PG-SG'  : 0,
+    'SG-SF' : 1,
+    'PG-SF' : 2,
+    'SF-PF' : 3,
+    'PF-C' : 4
 }
+
 
 rows    = []
 classes = []
 
-with open('data.csv', 'rb') as csvfile:
+with open('special_pos.csv', 'rb') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',')
     for idx, row in enumerate(spamreader):
         if idx == 0:
@@ -33,23 +34,11 @@ y = np.array(classes)
 
 # SVC usage from:
 # http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
-# C=13894954.94373136, gamma= 1.8420699693267165e-07
-# C=3.3598182862837742, gamma= 0.026366508987303555
-# C=2.6366508987303581, gamma= 0.026366508987303555
-# C=10000000, gamma= 1e-08
-# C= 1.0, gamma= 0.086596432336006529
-# C=1.5998587196060574, gamma= 0.095409547634999634
-# clf = SVC(C=10000000, gamma= 1e-08)
-# clf = SVC(C= 1.0, gamma= 0.086596432336006529)
-# clf = SVC(C=17.575106248547929, gamma= 0.0039069399370546126) # 0.98
-# clf = SVC(C=13894954.94373136, gamma= 1.8420699693267165e-07) # => 0.48999999999999994
-clf = SVC(C=1778279.4100389229, gamma= 5.6234132519034904e-07)
-# clf = SVC(C=1.5998587196060574, gamma= 0.095409547634999634) #
+clf = SVC(C=0.01, gamma= 1e-08)
 clf.fit(X, y)
 
-
 predicted = cross_validation.cross_val_predict(clf, X, y, cv=10)
-scores = cross_validation.cross_val_score(clf, X, y, cv=5)
+scores = cross_validation.cross_val_score(clf, X, y, cv=10)
 
 print(clf.score(X, y)) # => 1.0
 
